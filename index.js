@@ -1,15 +1,15 @@
 const freelancers = [
-  { name: "Dr. Slice", price: 25, occupation: "gardener" },
-  { name: "Dr. Pressure", price: 51, occupation: "programmer" },
-  { name: "Prof. Possibility", price: 43, occupation: "teacher" },
-  { name: "Prof. Prism", price: 81, occupation: "teacher" },
-  { name: "Dr. Impulse", price: 43, occupation: "teacher" },
-  { name: "Prof. Spark", price: 76, occupation: "programmer" },
-  { name: "Dr. Wire", price: 47, occupation: "teacher" },
-  { name: "Prof. Goose", price: 72, occupation: "driver" },
+  { name: "Twyla", price: 25, job: "gardener" },
+  { name: "Cynthia", price: 51, job: "programmer" },
+  { name: "Angelina", price: 43, job: "teacher" },
+  { name: "Todd", price: 81, job: "teacher" },
+  { name: "Ryan", price: 43, job: "teacher" },
+  { name: "Toni", price: 76, job: "programmer" },
+  { name: "Edge", price: 47, job: "teacher" },
+  { name: "August", price: 72, job: "driver" },
 ];
 
-const names = ["Alice", "Bob", "Cynthia", "Damian", "Emma", "Frank", "Gina"];
+const names = ["Alice", "Tina", "Karrin", "Dominic", "Emma", "Frank", "Gina"];
 const jobs = [
   "Writer",
   "Teacher",
@@ -19,23 +19,24 @@ const jobs = [
   "Gardener",
 ];
 
+const maxLength = 15;
+
 function init() {
   /**
    * 👉 STEP 1: Grab the div with the id of "root"
    */
   const rootContainer = document.getElementById("root");
-  /**
-   * 👉 STEP 2:
-   *    Create a new h1 element that says "Freelancer Forum"
-   *    Add the new h1 to the root div
-   */
 
+  /**
+   * 👉 STEP 2: Create a new h1 element that says "Freelancer Forum"
+   * Add the new h1 to the root div
+   */
   const heading = document.createElement("h1");
   heading.textContent = "Freelancer Forum";
   rootContainer.appendChild(heading);
 
   const h2 = document.createElement("h2");
-  h2.textContent = "The average starting price is";
+  h2.textContent = "The average starting price is $" + calculateAveragePrice();
   rootContainer.appendChild(h2);
 
   const availableh1 = document.createElement("h1");
@@ -43,34 +44,45 @@ function init() {
   rootContainer.appendChild(availableh1);
 
   /**
-   * 👉 STEP 3:
-   *    Create a table to hold our Freelancer Forum in
+   * 👉 STEP 3: Create a table to hold our Freelancer Forum in
    */
-
   const table = document.createElement("table");
   rootContainer.appendChild(table);
 
-  /**
-   * 👉 STEP 5:
-   *    Call the function you created in step 4
-   */
+  const thead = document.createElement("thead");
+  table.appendChild(thead);
 
-  //   table.appendChild(table);
-
-  const tbody = document.createElement("tbody");
-  table.appendChild(tbody);
+  const headerRow = document.createElement("tr");
+  thead.appendChild(headerRow);
 
   const nameColumn1 = document.createElement("th");
   nameColumn1.textContent = "Name";
-  tbody.appendChild(nameColumn1);
+  headerRow.appendChild(nameColumn1);
 
   const jobColumn2 = document.createElement("th");
   jobColumn2.textContent = "Occupation";
-  tbody.appendChild(jobColumn2);
+  headerRow.appendChild(jobColumn2);
 
   const priceColumn3 = document.createElement("th");
   priceColumn3.textContent = "Price";
-  tbody.appendChild(priceColumn3);
+  headerRow.appendChild(priceColumn3);
+
+  /**
+   * 👉 STEP 5: Call the function to render the freelancers
+   */
+  const tbody = document.createElement("tbody");
+  table.appendChild(tbody);
+
+  freeRender();
+}
+
+/**
+ * 👉 STEP 4: Function to render freelancers in the table
+ */
+function freeRender() {
+  const table = document.querySelector("table");
+  const tbody = table.querySelector("tbody");
+  tbody.innerHTML = "";
 
   freelancers.forEach((person) => {
     const freeRow = document.createElement("tr");
@@ -81,46 +93,47 @@ function init() {
     freeRow.appendChild(nameCell);
 
     const jobCell = document.createElement("td");
-    jobCell.textContent = person.occupation;
+    jobCell.textContent = person.job;
     freeRow.appendChild(jobCell);
 
     const priceCell = document.createElement("td");
-    priceCell.textContent = person.price;
+    priceCell.textContent = `$${person.price}`;
     freeRow.appendChild(priceCell);
-
-    tbody.appendChild(freeRow);
   });
 
-  //   freeRender();
+  const h2 = document.querySelector("h2");
+  h2.textContent = "The average starting price is $" + calculateAveragePrice();
 }
 
 /**
- * 👉 STEP 4:
- *    Create a function to render the Freelancer Forum in our Freelancer Forum array
+ * 👉 STEP 6: Function to add a new freelancer to the array
  */
-function freeRender() {}
-
-/**
- * 👉 STEP 6:
- *    Create a function to add a new Freelancer Forum to the Freelancer Forum array
- */
-
 function addFreelancer() {
-  const addPrice = Math.floor(Math.random() * 100);
+  const name = names[Math.floor(Math.random() * names.length)];
+  const job = jobs[Math.floor(Math.random() * jobs.length)];
+  const price = Math.floor(Math.random() * 100);
 
-  const addName = names[Math.floor(Math.random() * names.length)];
-
-  const addJob = jobs[Math.floor(Math.random() * jobs.length)];
-
-  freelancers.push({ name: addName, occupation: addJob, price: addPrice });
-
+  freelancers.push({ name, price, job });
   freeRender();
 }
 
 /**
- * 👉 STEP 7:
- *    Add an interval to add a new Freelancer Forum every second
+ * 👉 STEP 7: Add an interval to add a new freelancer every second
  */
+const addFreelancerIntervalId = setInterval(() => {
+  addFreelancer();
+
+  if (freelancers.length >= maxLength) {
+    clearInterval(addFreelancerIntervalId);
+  }
+}, 1000);
+
+function calculateAveragePrice() {
+  const total = freelancers.reduce(
+    (subtotal, current) => subtotal + current.price,
+    0
+  );
+  return Math.round(total / freelancers.length);
+}
 
 init();
-freeRender();
